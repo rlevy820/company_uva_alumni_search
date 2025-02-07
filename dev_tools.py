@@ -86,7 +86,7 @@ def add_company():
         industry = industries[industry_choice - 1]
         
         # Get company details
-        company_name = get_input("\nEnter company name: ")
+        company_name = get_input("\nEnter company name: ").title()
         if company_name == 'back':
             continue
         
@@ -143,7 +143,7 @@ def add_industry():
         city = cities[city_choice - 1]
         
         # Get new industry name
-        industry = get_input("\nEnter new industry name: ")
+        industry = get_input("\nEnter new industry name: ").title()
         if industry == 'back':
             continue
         
@@ -179,7 +179,7 @@ def add_city():
         region = regions[region_choice - 1]
         
         # Get new city details
-        city = get_input("\nEnter new city name: ")
+        city = get_input("\nEnter new city name: ").title()
         if city == 'back':
             continue
         
@@ -410,7 +410,7 @@ def update_company():
         
         # Get new details
         print("\nPress Enter to keep current value")
-        new_name = get_input("Enter new company name: ")
+        new_name = get_input("Enter new company name: ").title()
         if new_name == 'back':
             continue
         
