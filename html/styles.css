@@ -10,6 +10,41 @@
   .filter1 { grid-area: filter1; }
   
   .filter2 { grid-area: filter2; }
+
+.industry-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.industry-column {
+    min-width: 0;
+}
+
+.industry-category {
+    margin-bottom: 20px;
+}
+
+.industry-category h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 4px;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    flex: 0 0 auto;
+    margin-right: 8px;
+}
+
+.checkbox-wrapper label {
+    padding-left: 4px;
+    text-indent: -4px;
+}
   
   table {
     border-collapse: collapse;

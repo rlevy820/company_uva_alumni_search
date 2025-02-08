@@ -122,18 +122,36 @@
                 const industryCheckboxesDiv = document.getElementById('industryCheckboxes');
                 industryCheckboxesDiv.innerHTML = ''; // Clear existing options
 
-                // Organize industries by broad categories
-                Object.entries(industryBroadData).forEach(([category, categoryIndustries]) => {
-                    // Create category header
+                // Create columns container
+                const columnsContainer = document.createElement('div');
+                columnsContainer.className = 'industry-columns';
+                
+                const leftColumn = document.createElement('div');
+                leftColumn.className = 'industry-column';
+                const rightColumn = document.createElement('div');
+                rightColumn.className = 'industry-column';
+
+                // Define the order of categories for the columns
+                const leftColumnCategories = ['STEM & Technical Fields', 'Government, Law & Public Service'];
+                const rightColumnCategories = ['Business & Finance', 'Healthcare & Life Sciences', 'Creative & Cultural Industries'];
+                const remainingCategories = Object.keys(industryBroadData)
+                    .filter(cat => !leftColumnCategories.includes(cat) && !rightColumnCategories.includes(cat));
+
+                // Function to create category div
+                const createCategoryDiv = (category) => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'industry-category';
+
                     const header = document.createElement('h3');
                     header.textContent = category;
-                    header.style.marginTop = '20px';
-                    header.style.marginBottom = '10px';
-                    industryCheckboxesDiv.appendChild(header);
+                    categoryDiv.appendChild(header);
 
                     // Add checkboxes for industries in this category
-                    categoryIndustries.forEach(industry => {
+                    industryBroadData[category].forEach(industry => {
                         if (industries.includes(industry)) {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'checkbox-wrapper';
+
                             const checkbox = document.createElement('input');
                             checkbox.type = 'checkbox';
                             checkbox.value = industry;
@@ -143,12 +161,43 @@
                             label.htmlFor = `industry-${industry}`;
                             label.textContent = industry;
 
-                            industryCheckboxesDiv.appendChild(checkbox);
-                            industryCheckboxesDiv.appendChild(label);
-                            industryCheckboxesDiv.appendChild(document.createElement('br'));
+                            wrapper.appendChild(checkbox);
+                            wrapper.appendChild(label);
+                            categoryDiv.appendChild(wrapper);
                         }
                     });
+
+                    return categoryDiv;
+                };
+
+                // Populate left column
+                leftColumnCategories.forEach(category => {
+                    if (industryBroadData[category]) {
+                        leftColumn.appendChild(createCategoryDiv(category));
+                    }
                 });
+
+                // Add first half of remaining categories to left column
+                const midpoint = Math.ceil(remainingCategories.length / 2);
+                remainingCategories.slice(0, midpoint).forEach(category => {
+                    leftColumn.appendChild(createCategoryDiv(category));
+                });
+
+                // Populate right column
+                rightColumnCategories.forEach(category => {
+                    if (industryBroadData[category]) {
+                        rightColumn.appendChild(createCategoryDiv(category));
+                    }
+                });
+
+                // Add second half of remaining categories to right column
+                remainingCategories.slice(midpoint).forEach(category => {
+                    rightColumn.appendChild(createCategoryDiv(category));
+                });
+
+                columnsContainer.appendChild(leftColumn);
+                columnsContainer.appendChild(rightColumn);
+                industryCheckboxesDiv.appendChild(columnsContainer);
             }
         }
         
