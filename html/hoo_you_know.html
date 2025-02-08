@@ -5,42 +5,65 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
     
 </head>
-<body>
-    <h1>HOO YOU KNOW</h1>
-    <p>Choose cities and industries to connect with UVA alumni on LinkedIn and grow your network of Hoos.</p>
-    
-    <div>
-        <h3>How to Use</h3>
-        <ol>
-            <li>Select one or mulitple cities you are interested in working</li>
-            <li>Select one or multiple industries</li>
-            <li>Click Find Companies</li>
-            <li>Follow the 'UVA Alumni' link to find relevant alumni to connect with</li>
-        </ol>
-        <i><b>Note: some links may not have any alumni or return an unavailable page. If you encounter a link that does not work, please contact <a href="mailto:ryanlevy830@gmail.com">ryanlevy830@gmail.com</a></b></i>
-        <i><b>Contribute: help add new companies, cities, and industries to the website by filling out <a href="https://forms.gle/bBCW13N1eZAxb4S88">this form</a></b></i>
+<body>    
+    <div class="container">
+
+        <div class="head">
+            <h1>HOO YOU KNOW</h1>
+            <p>Choose cities and industries to connect with UVA alumni on LinkedIn and grow your network of Hoos.</p>    
+        </div>
+        
+        <div class="subhead">
+            <h3>How to Use</h3>
+            <ol>
+                <li>Select desired city (one or more)</li>
+                <li>Select desired industry (one or more)</li>
+                <li>Click Find Companies</li>
+                <li>Follow the 'UVA Alumni' link to find relevant alumni to connect with</li>
+            </ol>
+            <i><b>Note: some links may not have any alumni or return an unavailable page. If you encounter a link that does not work, please contact <a href="mailto:ryanlevy830@gmail.com">ryanlevy830@gmail.com</a></b></i><br>
+            <a href="https://forms.gle/bBCW13N1eZAxb4S88" target="_blank">Contribute by adding companies, cities, or industries</a>
+        </div>
+
+        <div class="filters">
+
+            <div class="filter1">
+                <div class="checkbox-group">
+                    <h3>Select Cities:</h3>
+                    <div id="cityCheckboxes"></div>
+                </div>
+            </div>
+
+            <div class="filter2"> 
+                <div class="checkbox-group">
+                    <h3>Select Industries:</h3>
+                    <div id="industryCheckboxes"></div>
+                </div>
+            </div>
+
+            <div class="button">
+                <button onclick="showCompanies()">Find Companies</button>
+            </div>
+
+         </div>
+        
+
+        <br>
+
+        <div class="table">
+            <div id="results"></div>
+        </div>
+
+        
+        <div class="foot">
+            <p>footer</p>
+        </div>
     </div>
-
-    <div class="checkbox-group">
-        <h3>Select Cities:</h3>
-        <div id="cityCheckboxes"></div>
-    </div>
-
-    <div class="checkbox-group">
-        <h3>Select Industries:</h3>
-        <div id="industryCheckboxes"></div>
-    </div>
-
-    <br>
-
-    <button onclick="showCompanies()">Find Companies</button>
-
-    <div id="results"></div>
 
     <script>
-        let cityIndustryData, companyCodesData, locationCodesData;
+        let cityIndustryData, companyCodesData, locationCodesData, industryBroadData;
 
-        const files = ['../json/city_industry_company.json', '../json/company_codes_.json', '../json/city_code.json']
+        const files = ['../json/city_industry_company.json', '../json/company_codes_.json', '../json/city_code.json', '../json/industry_broad.json']
 
         fetch(files[0])
             .then(response => response.json())
@@ -66,11 +89,18 @@
             })
             .catch(error => console.error('Error reading the JSON file:', error));
 
+        fetch(files[3])
+            .then(response => response.json())
+            .then(data => {
+                industryBroadData = data;
+                populateCheckboxes();
+            })
+            .catch(error => console.error('Error reading the JSON file:', error));
+
         function populateCheckboxes() {
-            if (companyCodesData && cityIndustryData) {
+            if (companyCodesData && cityIndustryData && industryBroadData) {
                 const cities = Object.keys(companyCodesData['USA']);
-                const industries = [...new Set(Object.values(cityIndustryData['USA']).flatMap(city => Object.keys(city)))]
-                    .sort();
+                const industries = [...new Set(Object.values(cityIndustryData['USA']).flatMap(city => Object.keys(city)))];
 
                 const cityCheckboxesDiv = document.getElementById('cityCheckboxes');
                 cityCheckboxesDiv.innerHTML = ''; // Clear existing options
@@ -91,19 +121,33 @@
 
                 const industryCheckboxesDiv = document.getElementById('industryCheckboxes');
                 industryCheckboxesDiv.innerHTML = ''; // Clear existing options
-                industries.forEach(industry => {
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = industry;
-                    checkbox.id = `industry-${industry}`;
 
-                    const label = document.createElement('label');
-                    label.htmlFor = `industry-${industry}`;
-                    label.textContent = industry;
+                // Organize industries by broad categories
+                Object.entries(industryBroadData).forEach(([category, categoryIndustries]) => {
+                    // Create category header
+                    const header = document.createElement('h3');
+                    header.textContent = category;
+                    header.style.marginTop = '20px';
+                    header.style.marginBottom = '10px';
+                    industryCheckboxesDiv.appendChild(header);
 
-                    industryCheckboxesDiv.appendChild(checkbox);
-                    industryCheckboxesDiv.appendChild(label);
-                    industryCheckboxesDiv.appendChild(document.createElement('br'));
+                    // Add checkboxes for industries in this category
+                    categoryIndustries.forEach(industry => {
+                        if (industries.includes(industry)) {
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.value = industry;
+                            checkbox.id = `industry-${industry}`;
+
+                            const label = document.createElement('label');
+                            label.htmlFor = `industry-${industry}`;
+                            label.textContent = industry;
+
+                            industryCheckboxesDiv.appendChild(checkbox);
+                            industryCheckboxesDiv.appendChild(label);
+                            industryCheckboxesDiv.appendChild(document.createElement('br'));
+                        }
+                    });
                 });
             }
         }
@@ -117,7 +161,7 @@
             console.log("Selected Industries:", selectedIndustries);
 
             if (cityIndustryData && companyCodesData && locationCodesData && selectedCities.length > 0 && selectedIndustries.length > 0) {
-                let resultHTML = '<table border="1" style="border-collapse: collapse; width: 100%;">';
+                let resultHTML = '<table border="1" style="border-collapse: collapse; width: 50%;">';
                 // resultHTML += '<thead><tr><th>Company</th><th>UVA Alumni Link</th></tr></thead>';
                 resultHTML += '<tbody>';
 

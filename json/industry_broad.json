@@ -1,0 +1,48 @@
+{
+    "STEM & Technical Fields": [
+      "Aerospace and Defense",
+      "Biotechnology and Life Sciences",
+      "Cybersecurity",
+      "Data Science and Analytics",
+      "Energy and Utilities",
+      "Engineering",
+      "Environmental Services and Sustainability",
+      "Information Technology and Software Development",
+      "Research and Development",
+      "Telecommunications",
+      "Transportation and Logistics"
+    ],
+    "Business & Finance": [
+      "Consulting",
+      "Finance and Investment Banking",
+      "Human Resources and Talent Management",
+      "Manufacturing and Production",
+      "Marketing, Advertising, and Public Relations",
+      "Real Estate Development and Urban Planning",
+      "Retail, E-Commerce, and Consumer Goods"
+    ],
+    "Government, Law & Public Service": [
+      "Government and Public Policy",
+      "International Relations and Foreign Service",
+      "Law and Legal Services",
+      "Non-Profit and International Development"
+    ],
+    "Healthcare & Life Sciences": [
+      "Healthcare and Public Health",
+      "Biotechnology and Life Sciences"
+    ],
+    "Creative & Cultural Industries": [
+      "Architecture and Design",
+      "Arts, Culture, and Entertainment",
+      "Media, Communications, and Journalism"
+    ],
+    "Education & Training": [
+      "Education and Educational Technology"
+    ],
+    "Consumer & Lifestyle Industries": [
+      "Agriculture and Food Sciences",
+      "Hospitality and Tourism",
+      "Sports Management and Recreation"
+    ]
+  }
+  

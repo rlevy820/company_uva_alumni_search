@@ -1,0 +1,38 @@
+.filters {  display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "filter1 filter2";
+  }
+  
+  .filter1 { grid-area: filter1; }
+  
+  .filter2 { grid-area: filter2; }
+  
+  table {
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table-header {
+    background-color: #cae0fc; 
+    height: 10px; 
+    font-weight: bold;
+}
