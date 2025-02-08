@@ -61,196 +61,225 @@
     </div>
 
     <script>
-        let cityIndustryData, companyCodesData, locationCodesData, industryBroadData;
+        // Global variables for the JSON data
+        let companyCodesData, locationCodesData, industryBroadData;
 
-        const files = ['../json/city_industry_company.json', '../json/company_codes_.json', '../json/city_code.json', '../json/industry_broad.json']
+        // Define file paths
+        const files = {
+        companyCodes: '../json/company_codes_.json',
+        locationCodes: '../json/city_code.json',
+        industryBroad: '../json/industry_broad.json'
+        };
 
-        fetch(files[0])
-            .then(response => response.json())
-            .then(data => {
-                cityIndustryData = data;
-                populateCheckboxes();
-            })
-            .catch(error => console.error('Error reading the JSON file:', error));
+        // Fetch company_codes_.json
+        fetch(files.companyCodes)
+        .then(response => response.json())
+        .then(data => {
+            companyCodesData = data;
+            populateCheckboxes();
+        })
+        .catch(error => console.error('Error reading company_codes_.json:', error));
 
-        fetch(files[1])
-            .then(response => response.json())
-            .then(data => {
-                companyCodesData = data;
-                populateCheckboxes();
-            })
-            .catch(error => console.error('Error reading the JSON file:', error));
+        // Fetch city_code.json
+        fetch(files.locationCodes)
+        .then(response => response.json())
+        .then(data => {
+            locationCodesData = data;
+            populateCheckboxes();
+        })
+        .catch(error => console.error('Error reading city_code.json:', error));
 
-        fetch(files[2])
-            .then(response => response.json())
-            .then(data => {
-                locationCodesData = data;
-                populateCheckboxes();
-            })
-            .catch(error => console.error('Error reading the JSON file:', error));
+        // Fetch industry_broad.json
+        fetch(files.industryBroad)
+        .then(response => response.json())
+        .then(data => {
+            industryBroadData = data;
+            populateCheckboxes();
+        })
+        .catch(error => console.error('Error reading industry_broad.json:', error));
 
-        fetch(files[3])
-            .then(response => response.json())
-            .then(data => {
-                industryBroadData = data;
-                populateCheckboxes();
-            })
-            .catch(error => console.error('Error reading the JSON file:', error));
-
+        /**
+         * populateCheckboxes() is called after each JSON file is loaded.
+         * It waits until all required data (company codes, location codes, and industry groupings)
+         * are available before building the city and industry checkboxes.
+         */
         function populateCheckboxes() {
-            if (companyCodesData && cityIndustryData && industryBroadData) {
-                const cities = Object.keys(companyCodesData['USA']);
-                const industries = [...new Set(Object.values(cityIndustryData['USA']).flatMap(city => Object.keys(city)))];
+        if (companyCodesData && locationCodesData && industryBroadData) {
+            // --- Build City Checkboxes ---
+            // Extract the list of cities from companyCodesData (assuming structure: { "USA": { "CityName": { ... } } })
+            const cities = Object.keys(companyCodesData['USA']);
+            const cityCheckboxesDiv = document.getElementById('cityCheckboxes');
+            cityCheckboxesDiv.innerHTML = ''; // Clear any existing checkboxes
 
-                const cityCheckboxesDiv = document.getElementById('cityCheckboxes');
-                cityCheckboxesDiv.innerHTML = ''; // Clear existing options
-                cities.forEach(city => {
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = city;
-                    checkbox.id = `city-${city}`;
+            cities.forEach(city => {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = city;
+            checkbox.id = `city-${city}`;
 
-                    const label = document.createElement('label');
-                    label.htmlFor = `city-${city}`;
-                    label.textContent = city;
+            const label = document.createElement('label');
+            label.htmlFor = `city-${city}`;
+            label.textContent = city;
 
-                    cityCheckboxesDiv.appendChild(checkbox);
-                    cityCheckboxesDiv.appendChild(label);
-                    cityCheckboxesDiv.appendChild(document.createElement('br'));
-                });
+            cityCheckboxesDiv.appendChild(checkbox);
+            cityCheckboxesDiv.appendChild(label);
+            cityCheckboxesDiv.appendChild(document.createElement('br'));
+            });
 
-                const industryCheckboxesDiv = document.getElementById('industryCheckboxes');
-                industryCheckboxesDiv.innerHTML = ''; // Clear existing options
+            // --- Build Industry Checkboxes ---
+            // Derive a list of industries from companyCodesData.
+            // Assuming companyCodesData has the structure:
+            // { "USA": { "CityName": { "IndustryName": [ { "Company": "...", "LinkedInURL": "..." }, ... ] } } }
+            // We loop over every city and its industries.
+            const industries = [
+            ...new Set(
+                Object.values(companyCodesData['USA'])
+                .flatMap(cityObj => Object.keys(cityObj))
+            )
+            ];
 
-                // Create columns container
-                const columnsContainer = document.createElement('div');
-                columnsContainer.className = 'industry-columns';
-                
-                const leftColumn = document.createElement('div');
-                leftColumn.className = 'industry-column';
-                const rightColumn = document.createElement('div');
-                rightColumn.className = 'industry-column';
+            // Get the industry container and clear its contents
+            const industryCheckboxesDiv = document.getElementById('industryCheckboxes');
+            industryCheckboxesDiv.innerHTML = '';
 
-                // Define the order of categories for the columns
-                const leftColumnCategories = ['STEM & Technical Fields', 'Government, Law & Public Service'];
-                const rightColumnCategories = ['Business & Finance', 'Healthcare & Life Sciences', 'Creative & Cultural Industries'];
-                const remainingCategories = Object.keys(industryBroadData)
-                    .filter(cat => !leftColumnCategories.includes(cat) && !rightColumnCategories.includes(cat));
+            // Create container elements for two columns
+            const columnsContainer = document.createElement('div');
+            columnsContainer.className = 'industry-columns';
 
-                // Function to create category div
-                const createCategoryDiv = (category) => {
-                    const categoryDiv = document.createElement('div');
-                    categoryDiv.className = 'industry-category';
+            const leftColumn = document.createElement('div');
+            leftColumn.className = 'industry-column';
+            const rightColumn = document.createElement('div');
+            rightColumn.className = 'industry-column';
 
-                    const header = document.createElement('h3');
-                    header.textContent = category;
-                    categoryDiv.appendChild(header);
+            // Define which broad categories go to which column
+            const leftColumnCategories = ['STEM & Technical Fields', 'Government, Law & Public Service'];
+            const rightColumnCategories = ['Business & Finance', 'Healthcare & Life Sciences', 'Creative & Cultural Industries'];
+            const remainingCategories = Object.keys(industryBroadData)
+            .filter(cat => !leftColumnCategories.includes(cat) && !rightColumnCategories.includes(cat));
 
-                    // Add checkboxes for industries in this category
-                    industryBroadData[category].forEach(industry => {
-                        if (industries.includes(industry)) {
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'checkbox-wrapper';
+            // Helper function to create a category section with checkboxes for each industry
+            const createCategoryDiv = (category) => {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'industry-category';
 
-                            const checkbox = document.createElement('input');
-                            checkbox.type = 'checkbox';
-                            checkbox.value = industry;
-                            checkbox.id = `industry-${industry}`;
+            const header = document.createElement('h3');
+            header.textContent = category;
+            categoryDiv.appendChild(header);
 
-                            const label = document.createElement('label');
-                            label.htmlFor = `industry-${industry}`;
-                            label.textContent = industry;
+            // For each industry in the broad category, create a checkbox if it exists in our list of industries.
+            industryBroadData[category].forEach(industry => {
+                if (industries.includes(industry)) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'checkbox-wrapper';
 
-                            wrapper.appendChild(checkbox);
-                            wrapper.appendChild(label);
-                            categoryDiv.appendChild(wrapper);
-                        }
-                    });
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = industry;
+                checkbox.id = `industry-${industry}`;
 
-                    return categoryDiv;
-                };
+                const label = document.createElement('label');
+                label.htmlFor = `industry-${industry}`;
+                label.textContent = industry;
 
-                // Populate left column
-                leftColumnCategories.forEach(category => {
-                    if (industryBroadData[category]) {
-                        leftColumn.appendChild(createCategoryDiv(category));
-                    }
-                });
+                wrapper.appendChild(checkbox);
+                wrapper.appendChild(label);
+                categoryDiv.appendChild(wrapper);
+                }
+            });
+            return categoryDiv;
+            };
 
-                // Add first half of remaining categories to left column
-                const midpoint = Math.ceil(remainingCategories.length / 2);
-                remainingCategories.slice(0, midpoint).forEach(category => {
-                    leftColumn.appendChild(createCategoryDiv(category));
-                });
-
-                // Populate right column
-                rightColumnCategories.forEach(category => {
-                    if (industryBroadData[category]) {
-                        rightColumn.appendChild(createCategoryDiv(category));
-                    }
-                });
-
-                // Add second half of remaining categories to right column
-                remainingCategories.slice(midpoint).forEach(category => {
-                    rightColumn.appendChild(createCategoryDiv(category));
-                });
-
-                columnsContainer.appendChild(leftColumn);
-                columnsContainer.appendChild(rightColumn);
-                industryCheckboxesDiv.appendChild(columnsContainer);
+            // Populate the left column with the predefined categories...
+            leftColumnCategories.forEach(category => {
+            if (industryBroadData[category]) {
+                leftColumn.appendChild(createCategoryDiv(category));
             }
+            });
+
+            // And add the first half of any remaining categories to the left column.
+            const midpoint = Math.ceil(remainingCategories.length / 2);
+            remainingCategories.slice(0, midpoint).forEach(category => {
+            leftColumn.appendChild(createCategoryDiv(category));
+            });
+
+            // Populate the right column with the predefined categories...
+            rightColumnCategories.forEach(category => {
+            if (industryBroadData[category]) {
+                rightColumn.appendChild(createCategoryDiv(category));
+            }
+            });
+
+            // And add the remaining half of the leftover categories to the right column.
+            remainingCategories.slice(midpoint).forEach(category => {
+            rightColumn.appendChild(createCategoryDiv(category));
+            });
+
+            // Append the columns to the main container
+            columnsContainer.appendChild(leftColumn);
+            columnsContainer.appendChild(rightColumn);
+            industryCheckboxesDiv.appendChild(columnsContainer);
         }
-        
+        }
+
+        /**
+         * showCompanies() reads the selected cities and industries,
+         * then uses companyCodesData (and locationCodesData for city codes) to build an HTML table of companies.
+         */
         function showCompanies() {
-            const selectedCities = Array.from(document.querySelectorAll('#cityCheckboxes input:checked')).map(cb => cb.value);
-            const selectedIndustries = Array.from(document.querySelectorAll('#industryCheckboxes input:checked')).map(cb => cb.value);
+        // Get selected city and industry values
+        const selectedCities = Array.from(document.querySelectorAll('#cityCheckboxes input:checked')).map(cb => cb.value);
+        const selectedIndustries = Array.from(document.querySelectorAll('#industryCheckboxes input:checked')).map(cb => cb.value);
 
-            // Debugging: Check if the selected city and industry include Washington, D.C. and Government and Public Policy
-            console.log("Selected Cities:", selectedCities);
-            console.log("Selected Industries:", selectedIndustries);
+        // Debugging output
+        console.log("Selected Cities:", selectedCities);
+        console.log("Selected Industries:", selectedIndustries);
 
-            if (cityIndustryData && companyCodesData && locationCodesData && selectedCities.length > 0 && selectedIndustries.length > 0) {
-                let resultHTML = '<table border="1" style="border-collapse: collapse; width: 50%;">';
-                // resultHTML += '<thead><tr><th>Company</th><th>UVA Alumni Link</th></tr></thead>';
-                resultHTML += '<tbody>';
+        if (companyCodesData && locationCodesData && selectedCities.length > 0 && selectedIndustries.length > 0) {
+            let resultHTML = '<table border="1" style="border-collapse: collapse; width: 50%;">';
+            resultHTML += '<tbody>';
 
-                selectedCities.forEach(city => {
-                    selectedIndustries.forEach(industry => {
-                        // Add a header row for each city/industry combination
-                        resultHTML += `<tr><td colspan="2" style="background-color: #cae0fc; height: 10px; font-weight: bold;">${industry}: ${city}</td></tr>`;
-                        
-                        // Debugging: Check if the data for the city and industry is being accessed correctly
-                        console.log(`Fetching data for City: ${city}, Industry: ${industry}`);
+            selectedCities.forEach(city => {
+            selectedIndustries.forEach(industry => {
+                // Header row for the city/industry combination
+                resultHTML += `<tr><td colspan="2" style="background-color: #cae0fc; height: 10px; font-weight: bold;">${industry}: ${city}</td></tr>`;
+                console.log(`Fetching data for City: ${city}, Industry: ${industry}`);
 
-                        const companies = cityIndustryData['USA'][city][industry];
-                        const companyUrls = companyCodesData['USA'][city][industry];
-                        const cityCode = locationCodesData['Cities'][city];
+                // Check if data exists for this combination
+                if (
+                companyCodesData['USA'][city] &&
+                companyCodesData['USA'][city][industry]
+                ) {
+                // Retrieve the list of companies for the selected city and industry.
+                // Each company object is assumed to have a "Company" and "LinkedInURL" property.
+                const companies = companyCodesData['USA'][city][industry];
+                const cityCode = locationCodesData['Cities'][city];
 
-                        // Debugging: Log the data for companies, URLs, and city code to check for issues
-                        console.log("Companies:", companies);
-                        console.log("Company URLs:", companyUrls);
-                        console.log("City Code:", cityCode);
+                console.log("Companies:", companies);
+                console.log("City Code:", cityCode);
 
-                        companies.forEach((company, index) => {
-                            const urlName = companyUrls[index]['Company'];
-                            const url = companyUrls[index]['LinkedInURL'];
-                            resultHTML += `
-                                <tr>
-                                    <td><a href="${url}/people/?facetGeoRegion=${cityCode}&facetSchool=4298" target="_blank">${company}</a></td>
-                                </tr>`;
-                        });
-
-                        // Add a break row after each industry in the current city
-                        resultHTML += '<tr><td colspan="2" style="height: 30px;"></td></tr>';
-                    });
+                companies.forEach(companyObj => {
+                    resultHTML += `
+                    <tr>
+                        <td>
+                        <a href="${companyObj.LinkedInURL}/people/?facetGeoRegion=${cityCode}&facetSchool=4298" target="_blank">
+                            ${companyObj.Company}
+                        </a>
+                        </td>
+                    </tr>`;
                 });
+                } else {
+                resultHTML += `<tr><td colspan="2">No companies found for this combination.</td></tr>`;
+                }
+                // Separation row after each industry
+                resultHTML += '<tr><td colspan="2" style="height: 30px;"></td></tr>';
+            });
+            });
 
-                resultHTML += '</tbody></table>';
-
-                document.getElementById('results').innerHTML = resultHTML;
-            } else {
-                alert('Please upload all required JSON files and select at least one city and one industry.');
-            }
+            resultHTML += '</tbody></table>';
+            document.getElementById('results').innerHTML = resultHTML;
+        } else {
+            alert('Please ensure all JSON files are loaded and select at least one city and one industry.');
+        }
         }
 
         
