@@ -71,3 +71,28 @@ tr:nth-child(even) {
     height: 10px; 
     font-weight: bold;
 }
+
+/* Ensure the results container uses flexbox for a two-column layout */
+#results {
+    display: flex;
+    justify-content: space-between;
+}
+  
+  /* Style for each column in the results */
+.results-column {
+    width: 48%; /* Adjust as needed for spacing */
+}
+  
+/* (Optional) Add margin or padding as needed */
+.results-column table {
+    margin-bottom: 20px;
+}
+  
+.industry-columns {
+    display: flex;
+    justify-content: space-between;
+}
+.industry-column {
+    width: 32%; /* Adjust as needed */
+}
+  
