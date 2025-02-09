@@ -295,7 +295,7 @@ function populateCheckboxes() {
       resultsDiv.appendChild(leftColumn);
       resultsDiv.appendChild(rightColumn);
     } else {
-      alert('Please ensure all JSON files are loaded and select at least one city and one industry.');
+      alert('Select a city AND an industry.');
     }
   }
   

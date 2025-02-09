@@ -7,27 +7,43 @@
 <body>    
   <div class="container">
 
+    <div class="head-container">
+
     <div class="head">
-      <h1>HOO YOU KNOW</h1>
-      <p>Choose cities and industries to connect with UVA alumni on LinkedIn and grow your network of Hoos.</p>    
+        <h1>Find Companies and UVA Alumni</h1>
+        <p class="subtitle">
+            This website serves two purposes
+            <ol>
+                <li>Brainstorm what companies to look into</li>
+                <li>Find UVA Alumni at those companies</li>
+            </ol>
+            Once you get to LinkedIn, <b>Connect</b> and <b>Message</b> them (its the button next to connect)
+        </p>
     </div>
     
+    
     <div class="subhead">
-      <h3>How to Use</h3>
-      <ol>
-        <li>Select desired city (one or more)</li>
-        <li>Select desired industry (one or more)</li>
-        <li>Click Find Companies</li>
-        <li>Follow the 'UVA Alumni' link to find relevant alumni to connect with</li>
-      </ol>
-      <i>
-        <b>
-          Note: some links may not have any alumni or return an unavailable page. If you encounter a link that does not work, please contact 
-          <a href="mailto:ryanlevy830@gmail.com">ryanlevy830@gmail.com</a>
-        </b>
-      </i>
-      <br>
-      <a href="https://forms.gle/bBCW13N1eZAxb4S88" target="_blank">Contribute by adding companies, cities, or industries</a>
+        <h3>How to Use</h3>
+        <div class="steps">
+            <div class="step"><span>1</span> Select desired cities</div>
+            <div class="step"><span>2</span> Select desired industries</div>
+            <div class="step"><span>3</span> Click <span class="find-comp-indicator">Find Companies</span></div>
+            <div class="step"><span>4</span> Follow the links to find relevant alumni</div>
+        </div>
+        
+        <div class="note">
+            <strong>Some links may not lead to alumni profiles or may be unavailable.</strong>  
+            If you find a broken link, let me know at  
+            <a href="mailto:ryanlevy830@gmail.com">ryanlevy830@gmail.com</a> or contribute to the database.
+        </div>
+    
+        <div class="contribute">
+            <a class="contribute-btn-a" href="https://forms.gle/bBCW13N1eZAxb4S88" target="_blank">
+                <button class="contribute-btn">Contribute to the Database</button>
+            </a>
+        </div>
+    </div>
+
     </div>
 
     <div class="filters">
@@ -46,8 +62,9 @@
       </div>
 
       <div class="button">
-        <button onclick="showCompanies()">Find Companies</button>
+        <button class="find-comp-btn" onclick="showCompanies()">Find Companies</button>
       </div>
+
     </div>
 
     <br>
@@ -57,7 +74,7 @@
     </div>
 
     <div class="foot">
-      <p>footer</p>
+      <p>Copyright © 2024, Hoo You Know. All Rights Reserved</p>
     </div>
   </div>
 
