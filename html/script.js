@@ -49,20 +49,22 @@ function populateCheckboxes() {
       const cities = Object.keys(companyCodesData['USA']);
       cities.forEach(city => {
         const wrapper = document.createElement('div');
-  
+        wrapper.className = 'checkbox-wrapper';  // Use the same class as industries
+        
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = city;
         checkbox.id = `city-${city}`;
-  
+        
         const label = document.createElement('label');
         label.htmlFor = `city-${city}`;
         label.textContent = city;
-  
+        
         wrapper.appendChild(checkbox);
         wrapper.appendChild(label);
         cityCheckboxesDiv.appendChild(wrapper);
       });
+      
   
       // Add the "Select All" checkbox (acts as a flag only)
       const selectAllWrapper = document.createElement('div');
